@@ -7,5 +7,5 @@ const salleSchema = new mongoose.Schema({
   admin: { type: mongoose.Schema.Types.ObjectId, ref: 'Administrateur', required: true }
 });
 
-// Default export of the Salle model
+
 export default mongoose.model('Salle', salleSchema);

@@ -1,5 +1,5 @@
 
-import Seance from '../models/Seance.js'; // This line is correct
+import Seance from '../models/Seance.js';
 
 // Create a new Seance
 export const createSeance = async (req, res) => {

@@ -1,11 +1,16 @@
 import Reservation from '../models/Reservation.js';
-import Client from '../models/Client.js';
-
+import Utilisateur from '../models/Utilisateur.js'; 
 
 // Create a new Reservation
 export const createReservation = async (req, res) => {
     try {
-        const reservation = new Reservation(req.body);
+        const { utilisateurId, seanceId, nombreDePlaces, status = 'Confirmée' } = req.body; 
+        const reservation = new Reservation({
+            utilisateur: utilisateurId,
+            seance: seanceId,
+            nombreDePlaces,
+            status // Include status
+        });
         await reservation.save();
         res.status(201).json(reservation);
     } catch (error) {
@@ -13,10 +18,11 @@ export const createReservation = async (req, res) => {
     }
 };
 
+
 // Get all Reservations
 export const getReservations = async (req, res) => {
     try {
-        const reservations = await Reservation.find().populate('client seance');
+        const reservations = await Reservation.find().populate('utilisateur seance'); // Populate utilisateur
         res.status(200).json(reservations);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -26,7 +32,7 @@ export const getReservations = async (req, res) => {
 // Get a single Reservation by ID
 export const getReservationById = async (req, res) => {
     try {
-        const reservation = await Reservation.findById(req.params.id).populate('client seance');
+        const reservation = await Reservation.findById(req.params.id).populate('utilisateur seance'); // Populate utilisateur
         if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
         res.status(200).json(reservation);
     } catch (error) {
@@ -34,16 +40,8 @@ export const getReservationById = async (req, res) => {
     }
 };
 
-// Update a Reservation by ID
-export const updateReservation = async (req, res) => {
-    try {
-        const reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
-        res.status(200).json(reservation);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
+
+
 
 // Delete a Reservation by ID
 export const deleteReservation = async (req, res) => {

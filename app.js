@@ -5,7 +5,9 @@ import authRoutes from './routes/authRoutes.js';
 import filmRoutes from './routes/filmRoutes.js';
 import salleRoutes from './routes/salleRoutes.js';
 import seanceRoutes from './routes/seanceRoutes.js';
-import reservationRoutes from './routes/reservationRoutes.js'; // This will now import the default export
+import reservationRoutes from './routes/reservationRoutes.js';
+
+
 
 
 dotenv.config();
