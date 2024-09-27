@@ -1,10 +1,11 @@
 
-import Salle from '../models/Salle.js'; // Correctly import the Salle model
+import Salle from '../models/Salle.js'; 
 
 // Create a new salle
 export const createSalle = async (req, res) => {
     try {
-        const salle = new Salle(req.body);
+        const salle = new Salle(req.body
+        );
         await salle.save();
         res.status(201).json(salle);
     } catch (error) {

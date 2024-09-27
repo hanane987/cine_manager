@@ -6,6 +6,7 @@ import filmRoutes from './routes/filmRoutes.js';
 import salleRoutes from './routes/salleRoutes.js';
 import seanceRoutes from './routes/seanceRoutes.js';
 import reservationRoutes from './routes/reservationRoutes.js';
+import protectedRoutes from './routes/protectedRoutes.js';
 
 
 
@@ -34,6 +35,7 @@ app.use('/api/films', filmRoutes);
 app.use('/api/salles', salleRoutes);
 app.use('/api/seances', seanceRoutes);
 app.use('/api/reservations', reservationRoutes);
+app.use('/api', protectedRoutes);
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
