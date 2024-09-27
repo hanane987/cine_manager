@@ -3,7 +3,7 @@ import authMiddleware from '../middleware/authenticateToken.js'; // Adjust the p
 
 const router = express.Router();
 
-// Example of a protected resource
+// Protected resource
 router.get('/protected-resource', authMiddleware(['Client', 'Administrateur']), (req, res) => {
     res.status(200).json({ message: 'Welcome to the protected resource!', user: req.user });
 });
