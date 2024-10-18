@@ -10,5 +10,4 @@ const seanceSchema = new mongoose.Schema({
 });
 
 
-const Seance = mongoose.model('Seance', seanceSchema);
-export default Seance; 
+export default mongoose.models.Seance || mongoose.model('Seance', seanceSchema);

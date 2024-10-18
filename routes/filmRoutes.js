@@ -6,24 +6,24 @@ import {
     getFilms,
     getFilmById,
     updateFilm,
-    deleteFilm
+    deleteFilm,
+    addComment,
+    addRating,
+    toggleFavorite
 } from '../controllers/filmController.js';
 
 const router = express.Router();
 
-// Create a film
+// Film CRUD routes
 router.post('/', createFilm);
-
-// Get all films
 router.get('/', getFilms);
-
-// Get a film by ID
 router.get('/:id', getFilmById);
-
-// Update a film by ID
 router.put('/:id', updateFilm);
-
-// Delete a film by ID
 router.delete('/:id', deleteFilm);
+
+// Comment, Rating, and Favorite routes
+router.post('/:filmId/comment', addComment);
+router.post('/:filmId/rating', addRating);
+router.post('/:filmId/favorite', toggleFavorite);
 
 export default router;

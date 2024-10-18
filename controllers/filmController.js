@@ -1,13 +1,24 @@
-
+// controllers/filmController.js
 
 import Film from '../models/Film.js';
+import Comment from '../models/Comment.js';
+import Rating from '../models/Rating.js';
+import Favorite from '../models/Favorite.js';
 
 // Create a new film
 export const createFilm = async (req, res) => {
-    const { titre, duree, genre, description, admin } = req.body;
+    const { title, year, duration, genre, description, imageUrl } = req.body;
 
     try {
-        const newFilm = new Film({ titre, duree, genre, description, admin });
+        const newFilm = new Film({ 
+            title, 
+            year, 
+            duration, 
+            genre, 
+            description, 
+            imageUrl 
+        });
+
         await newFilm.save();
         res.status(201).json({ message: 'Film created successfully', film: newFilm });
     } catch (error) {
@@ -41,11 +52,11 @@ export const getFilmById = async (req, res) => {
 // Update a film by ID
 export const updateFilm = async (req, res) => {
     try {
-        const film = await Film.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!film) {
+        const updatedFilm = await Film.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedFilm) {
             return res.status(404).json({ message: 'Film not found' });
         }
-        res.status(200).json({ message: 'Film updated successfully', film });
+        res.status(200).json({ message: 'Film updated successfully', film: updatedFilm });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -54,12 +65,61 @@ export const updateFilm = async (req, res) => {
 // Delete a film by ID
 export const deleteFilm = async (req, res) => {
     try {
-        const film = await Film.findByIdAndDelete(req.params.id);
-        if (!film) {
+        const deletedFilm = await Film.findByIdAndDelete(req.params.id);
+        if (!deletedFilm) {
             return res.status(404).json({ message: 'Film not found' });
         }
         res.status(200).json({ message: 'Film deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+};
+
+// Add a comment
+export const addComment = async (req, res) => {
+    try {
+        const { filmId } = req.params;
+        const { utilisateur, content } = req.body;
+
+        const comment = new Comment({ filmId, utilisateur, content });
+        await comment.save();
+        res.status(201).json(comment);
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding comment', error });
+    }
+};
+
+// Add a rating
+export const addRating = async (req, res) => {
+    try {
+        const { filmId } = req.params;
+        const { utilisateur, score } = req.body;
+
+        const rating = new Rating({ filmId, utilisateur, score });
+        await rating.save();
+        res.status(201).json(rating);
+    } catch (error) {
+        res.status(500).json({ message: 'Error adding rating', error });
+    }
+};
+
+// Toggle favorite
+export const toggleFavorite = async (req, res) => {
+    try {
+        const { filmId } = req.params;
+        const { utilisateur } = req.body;
+
+        const existingFavorite = await Favorite.findOne({ filmId, utilisateur });
+
+        if (existingFavorite) {
+            await existingFavorite.deleteOne(); // Remove from favorites
+            res.json({ message: 'Removed from favorites' });
+        } else {
+            const favorite = new Favorite({ filmId, utilisateur });
+            await favorite.save();
+            res.status(201).json(favorite);
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error toggling favorite', error });
     }
 };
