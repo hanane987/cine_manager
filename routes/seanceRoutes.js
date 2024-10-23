@@ -1,29 +1,31 @@
 import express from 'express';
-import { createSeance, getSeances, getSeanceById, updateSeance, deleteSeance } from '../controllers/seanceController.js';
-import Seance from '../models/Seance.js';
+import {
+    createSeance,
+    getSeances,
+    getSeanceById,
+    updateSeance,
+    deleteSeance,
+    getSeancesByFilmId
+} from '../controllers/seanceController.js';
+
 const router = express.Router();
-router.get('/', async (req, res) => {
-    try {
-      const seances = await Seance.find(); // Fetch all seances
-      res.json(seances); // Send the seances as a JSON response
-    } catch (error) {
-      console.error('Error fetching seances:', error);
-      res.status(500).json({ message: 'Failed to load seances.' });
-    }
-  });
-// Create a Seance
+
+// Route to create a new Seance
 router.post('/', createSeance);
 
-// Get all Seances
+// Route to fetch all Seances
 router.get('/', getSeances);
 
-// Get a Seance by ID
+// Route to fetch a single Seance by ID
 router.get('/:id', getSeanceById);
 
-// Update a Seance
+// Route to update a Seance
 router.put('/:id', updateSeance);
 
-// Delete a Seance
+// Route to delete a Seance
 router.delete('/:id', deleteSeance);
+
+// Route to fetch Seances by Film ID
+router.get('/film/:id', getSeancesByFilmId);
 
 export default router;

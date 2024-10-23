@@ -1,5 +1,3 @@
-// controllers/filmController.js
-
 import Film from '../models/Film.js';
 import Comment from '../models/Comment.js';
 import Rating from '../models/Rating.js';
@@ -9,20 +7,16 @@ import Favorite from '../models/Favorite.js';
 export const createFilm = async (req, res) => {
     const { title, year, duration, genre, description, imageUrl } = req.body;
 
-    try {
-        const newFilm = new Film({ 
-            title, 
-            year, 
-            duration, 
-            genre, 
-            description, 
-            imageUrl 
-        });
+    if (!title || !year || !duration || !genre || !description) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
 
+    try {
+        const newFilm = new Film({ title, year, duration, genre, description, imageUrl });
         await newFilm.save();
         res.status(201).json({ message: 'Film created successfully', film: newFilm });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -40,10 +34,26 @@ export const getFilms = async (req, res) => {
 export const getFilmById = async (req, res) => {
     try {
         const film = await Film.findById(req.params.id);
+
         if (!film) {
             return res.status(404).json({ message: 'Film not found' });
         }
-        res.status(200).json(film);
+
+        const comments = await Comment.find({ filmId: film._id }).populate('utilisateur', 'name');
+        const ratings = await Rating.find({ filmId: film._id });
+        const averageRating = ratings.length 
+            ? ratings.reduce((sum, rating) => sum + rating.score, 0) / ratings.length 
+            : null;
+
+        const { utilisateur } = req.body; 
+        const isFavorite = await Favorite.findOne({ filmId: film._id, utilisateur });
+
+        res.status(200).json({
+            film,
+            comments,
+            averageRating,
+            isFavorite: !!isFavorite,
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -75,51 +85,71 @@ export const deleteFilm = async (req, res) => {
     }
 };
 
-// Add a comment
+// Add a comment to a film
 export const addComment = async (req, res) => {
-    try {
-        const { filmId } = req.params;
-        const { utilisateur, content } = req.body;
+    const { filmId } = req.params;
+    const { utilisateur, content } = req.body;
 
+    if (!content) {
+        return res.status(400).json({ error: 'Content is required' });
+    }
+
+    try {
         const comment = new Comment({ filmId, utilisateur, content });
         await comment.save();
-        res.status(201).json(comment);
+        res.status(201).json({ message: 'Comment added', comment });
     } catch (error) {
         res.status(500).json({ message: 'Error adding comment', error });
     }
 };
 
-// Add a rating
+// Add a rating to a film
 export const addRating = async (req, res) => {
-    try {
-        const { filmId } = req.params;
-        const { utilisateur, score } = req.body;
+    const { filmId } = req.params;
+    const { utilisateur, score } = req.body;
 
+    if (score < 1 || score > 5) {
+        return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+    }
+
+    try {
         const rating = new Rating({ filmId, utilisateur, score });
         await rating.save();
-        res.status(201).json(rating);
+        res.status(201).json({ message: 'Rating added', rating });
     } catch (error) {
         res.status(500).json({ message: 'Error adding rating', error });
     }
 };
 
-// Toggle favorite
+// Toggle favorite for a film
 export const toggleFavorite = async (req, res) => {
-    try {
-        const { filmId } = req.params;
-        const { utilisateur } = req.body;
+    const { filmId } = req.params;
+    const { utilisateur } = req.body;
 
+    try {
         const existingFavorite = await Favorite.findOne({ filmId, utilisateur });
 
         if (existingFavorite) {
-            await existingFavorite.deleteOne(); // Remove from favorites
+            await existingFavorite.deleteOne();
             res.json({ message: 'Removed from favorites' });
         } else {
             const favorite = new Favorite({ filmId, utilisateur });
             await favorite.save();
-            res.status(201).json(favorite);
+            res.status(201).json({ message: 'Added to favorites', favorite });
         }
     } catch (error) {
         res.status(500).json({ message: 'Error toggling favorite', error });
+    }
+};
+
+// Get film statistics (total number of films)
+export const getFilmStatistics = async (req, res) => {
+    try {
+        const totalFilms = await Film.countDocuments();
+        res.status(200).json({
+            totalFilms
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 };

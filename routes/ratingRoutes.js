@@ -1,10 +1,9 @@
 // ratingRoutes.js
 import express from 'express';
-import { addRating } from '../controllers/ratingController.js'; // Adjust the import path as needed
+import { addRating } from '../controllers/ratingController.js'; 
 
 const router = express.Router();
 
-// Define the POST route for adding a rating
-router.post('/', addRating); // Route to handle adding a rating
+router.post('/', addRating); 
 
 export default router;

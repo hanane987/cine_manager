@@ -16,13 +16,13 @@ const ratingSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 1,
-    max: 5, // Assuming rating is on a scale of 1 to 5
+    max: 5, // Rating scale from 1 to 5
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-});
+}, { timestamps: true }); // Optional: adds createdAt and updatedAt fields
 
 const Rating = mongoose.model('Rating', ratingSchema);
 
