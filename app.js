@@ -14,7 +14,7 @@ import protectedRoutes from './routes/protectedRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import ratingRoutes from './routes/ratingRoutes.js'; 
 import mediaRoutes from './routes/mediaRoutes.js';
-import statisticsRoutes from './routes/statistics.js';
+import statistics from './routes/statistics.js';
 
 
 // Load environment variables

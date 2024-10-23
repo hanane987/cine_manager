@@ -6,7 +6,11 @@ const utilisateurSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     mot_de_passe: { type: String, required: true },
     role: { type: String, enum: ['Client', 'Administrateur'], required: true },
-    type_compte: { type: String, enum: ['subscribed', 'basic'], default: 'subscribed' }
+    type_compte: { type: String, enum: ['subscribed', 'basic'], default: 'subscribed' },
+    banned: {
+      type: Boolean,
+      default: false,
+  }
 });
 
 // Hash password before saving

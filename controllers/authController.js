@@ -57,3 +57,32 @@ export const login = async (req, res) => {
 };
 
 
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await Utilisateur.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Ban or unban a user
+export const toggleUserBan = async (req, res) => {
+    const { userId } = req.params; // Get user ID from request params
+
+    try {
+        const user = await Utilisateur.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Toggle banned status
+        user.banned = !user.banned;
+        await user.save();
+
+        res.json({ message: `User has been ${user.banned ? 'banned' : 'unbanned'}` });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
