@@ -19,4 +19,4 @@ router.get('/protected', authMiddleware(['Client', 'Administrateur']), (req, res
     res.send('This is a protected route for Client and Administrateur roles.');
 });
 
-export default router;
+    export default router;
