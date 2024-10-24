@@ -34,30 +34,22 @@ export const getFilms = async (req, res) => {
 export const getFilmById = async (req, res) => {
     try {
         const film = await Film.findById(req.params.id);
-
         if (!film) {
             return res.status(404).json({ message: 'Film not found' });
         }
-
+        
+        // Fetch comments for the film
         const comments = await Comment.find({ filmId: film._id }).populate('utilisateur', 'name');
-        const ratings = await Rating.find({ filmId: film._id });
-        const averageRating = ratings.length 
-            ? ratings.reduce((sum, rating) => sum + rating.score, 0) / ratings.length 
-            : null;
-
-        const { utilisateur } = req.body; 
-        const isFavorite = await Favorite.findOne({ filmId: film._id, utilisateur });
-
+        
         res.status(200).json({
             film,
-            comments,
-            averageRating,
-            isFavorite: !!isFavorite,
+            comments, // Include comments in the response
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 // Update a film by ID
 export const updateFilm = async (req, res) => {
